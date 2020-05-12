@@ -26,7 +26,7 @@ type CreateArticleReq struct {
 	Tid			 string         `json:"tid"`
 	Uid          string         `json:"uid"`
 	A_timestamp  string         `json:"a_timestamp"`
-	Reward       sdk.Coins      `json:"reward"`            // reward of the article
+	Reward       string         `json:"reward"`            // reward of the article
 }
 
 func CreateArticleHandler(cliCtx context.CLIContext) http.HandlerFunc{
@@ -49,8 +49,13 @@ func CreateArticleHandler(cliCtx context.CLIContext) http.HandlerFunc{
 			return
 		}
 
+		coins, err := sdk.ParseCoins(req.Reward)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
 		// create the message
-		msg := types.NewMsgCreateArticle(addr, req.A_text, req.A_title, req.Tag, req.Article_id, req.Tid, req.Uid, req.A_timestamp, req.Reward)
+		msg := types.NewMsgCreateArticle(addr, req.A_text, req.A_title, req.Tag, req.Article_id, req.Tid, req.Uid, req.A_timestamp, coins)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -72,7 +77,7 @@ type CreateCommentReq struct {
 	Uid          string          `json:"uid"`							 // id of the user
 	C_timestamp  string          `json:"c_timestamp"`                    // timestamp of the comment 
 	C_text       string          `json:"c_text"`                         // context of the comment
-	Reward       sdk.Coins       `json:"reward"`
+	Reward       string          `json:"reward"`
 }
 
 func CreateCommentHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -95,8 +100,14 @@ func CreateCommentHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
+		coins, err := sdk.ParseCoins(req.Reward)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		// create the message
-		msg := types.NewMsgCreateComment(addr, req.Comment_id, req.Article_id, req.Tid, req.Uid, req.C_timestamp, req.C_text, req.Reward)
+		msg := types.NewMsgCreateComment(addr, req.Comment_id, req.Article_id, req.Tid, req.Uid, req.C_timestamp, req.C_text, coins)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -119,8 +130,7 @@ type CreateReturnVisitReq struct {
 	Rv_timestamp     string           `json:"rv_timestamp"`
 	Rv_text			 string           `json:"rv_text"`
 	Flag             string           `json:"flag"` 
-	Reward           sdk.Coins        `json:"reward"`            // reward of the article
-
+	Reward           string           `json:"reward"`            // reward of the article
 }
 
 
@@ -144,8 +154,14 @@ func CreateReturnVisitHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
+		coins, err := sdk.ParseCoins(req.Reward)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		// create the message
-		msg := types.NewMsgCreateReturnVisit(addr, req.Return_visit_id, req.Article_id, req.Tid, req.Uid, req.Rv_timestamp, req.Rv_text, req.Flag, req.Reward)
+		msg := types.NewMsgCreateReturnVisit(addr, req.Return_visit_id, req.Article_id, req.Tid, req.Uid, req.Rv_timestamp, req.Rv_text, req.Flag, coins)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

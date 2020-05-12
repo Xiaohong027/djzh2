@@ -100,6 +100,7 @@ func handleMsgCreateComment(ctx sdk.Context, k Keeper, msg MsgCreateComment) (*s
 	if err == nil {
 		return nil, sdkerrors.Wrap(err, "Comment with that id already exists")
 	}
+	//need to modify
 	moduleAcct := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
 	sdkError := k.CoinKeeper.SendCoins(ctx, comment.Creator, moduleAcct, comment.Reward)
 	if sdkError != nil {
